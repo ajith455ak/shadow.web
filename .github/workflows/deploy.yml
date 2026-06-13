@@ -1,0 +1,64 @@
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Trigger Deploy and Wait for Completion
+        run: |
+          cd backend
+          python trigger_deploy.py > deploy_res.json
+          cat deploy_res.json
+          # Extract the deploy ID from the json response (locating the JSON block)
+          DEPLOY_ID=$(python -c "import json; content = open('deploy_res.json').read(); start = content.find('{'); print(json.loads(content[start:])['id'])")
+          echo "Triggered Deploy ID: $DEPLOY_ID"
+          
+          # Query deploy status until live or failed
+          python -c "
+          import urllib.request, json, ssl, time, sys
+          api_key = 'rnd_oChEZnH4KJPJk6sILMVt4HfvnENq'
+          service_id = 'srv-d8mecb67r5hc739mkn10'
+          deploy_id = '$DEPLOY_ID'
+          headers = {'Authorization': f'Bearer {api_key}', 'Accept': 'application/json'}
+          url = f'https://api.render.com/v1/services/{service_id}/deploys/{deploy_id}'
+          req = urllib.request.Request(url, headers=headers)
+          ctx = ssl.create_default_context()
+          ctx.check_hostname = False
+          ctx.verify_mode = ssl.CERT_NONE
+          print(f'Waiting for deploy {deploy_id} to complete...')
+          while True:
+              try:
+                  with urllib.request.urlopen(req, context=ctx) as response:
+                      data = json.loads(response.read().decode())
+                      status = data['status']
+                      print(f'Current deploy status: {status}')
+                      if status == 'live':
+                          print('Deploy succeeded!')
+                          sys.exit(0)
+                      elif status in ('build_failed', 'update_failed', 'canceled'):
+                          print(f'Deploy failed with status: {status}')
+                          sys.exit(1)
+              except Exception as e:
+                  print(f'Error checking deploy status: {e}')
+              time.sleep(15)
+          "

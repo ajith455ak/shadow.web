@@ -1,0 +1,43 @@
+{
+  "summary": "Shadow Nexus backend tested end-to-end via pytest against http://localhost:8001/api (also verified external ingress https://phantom-grid.preview.emergentagent.com). 39/39 tests passed including: register/login (+remember_me), forgot-password (known + unknown email branch), JWT-protected /auth/me, character options + create-once enforcement, dashboard HUD aggregation (xp_progress, current_mission, 3 deterministic daily challenges), chapters with level-gated unlock and sequential mission unlock, mission completion flow (XP/coins/items/achievement awarding, level-up advance, already-completed rejection, puzzle/combat fail branches), combat setup with derived player stats, NPC catalog (system_prompt hidden), NPC chat through Claude Sonnet 4.5 via emergentintegrations producing a non-fallback reply, conversation history persistence, inventory listing + equip validation, skill tree with can_unlock gating, achievements (first-mission unlock observed), daily challenge determinism, and leaderboard sort order. No critical issues found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/daily-challenges", "issue": "daily_seed_index() uses built-in hash() which is per-process randomized (PYTHONHASHSEED). With multiple uvicorn workers, the same user could see different daily challenge sets on each request. Use hashlib (e.g., md5/sha1) for cross-process deterministic seeding."},
+      {"endpoint": "POST /api/auth/forgot-password", "issue": "Returns reset_token_demo in JSON. Acceptable for demo but should be feature-flagged off in production to avoid token leakage."},
+      {"endpoint": "global CORS", "issue": "allow_origins=['*'] combined with allow_credentials=True is rejected by strict browsers and is a security smell. Restrict to the frontend origin in production."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "global styles", "issue": "Expo logs show repeated warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' (frontend out of scope this run, flagging for next iteration)."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_shadow_nexus.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Optional) Replace built-in hash() in daily_seed_index() with hashlib-based digest for multi-worker determinism.",
+    "(Optional) Gate reset_token_demo behind a DEBUG/DEMO env flag before going to production.",
+    "(Frontend, next iteration) Replace deprecated React Native shadow* props with boxShadow."
+  ],
+  "critical_code_review_comments": [
+    "server.py is 781 lines; consider splitting into routers (auth, character, missions, npcs, skills, etc.) once iteration cadence allows.",
+    "MongoDB ObjectId is correctly excluded everywhere via {\"_id\": 0} projection — good.",
+    "JWT secret and EMERGENT_LLM_KEY read from env — good. JWT_SECRET present, EMERGENT_LLM_KEY present.",
+    "Achievement XP awards bypass apply_xp's level-up logic (XP is added but level not recomputed inside check_achievements). Apply_xp should be called for achievement XP too, otherwise huge achievement XP (e.g., ach_legend = 1000) won't trigger a level-up."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_shadow_nexus.py (created)"
+  ],
+  "success_rate": {"backend": "100% (39/39)", "frontend": "N/A (not in scope)"},
+  "seed_data_creation": "Fresh TEST_<hex>@nexus.io users created at runtime by fixtures; no manual seeding required. Static seed_data.py drives chapters/missions/NPCs/items.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend is fully passing. When testing frontend, use EXPO_PUBLIC_BACKEND_URL=https://phantom-grid.preview.emergentagent.com. Auth flow: register → /api/character (avatar_1..avatar_22, classes: security_analyst/penetration_tester/malware_hunter/network_defender/digital_forensics) → dashboard. Use Bearer JWT in Authorization header. NPC chat through Claude Sonnet 4.5 works (response in ~5-10s).",
+  "rca_of_issue": "N/A — no bugs to RCA. Two initial test-side assertion mismatches (uppercase vs. lowercase email) were due to backend's intentional email lower-casing during register/login; tests were corrected to compare case-insensitively."
+}

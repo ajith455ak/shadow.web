@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: shadow-nexus-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: shadow_nexus_prod
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ENABLE_DEMO_TOKENS
+        value: "false"

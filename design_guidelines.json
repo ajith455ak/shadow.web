@@ -1,0 +1,176 @@
+{
+  "project_name": "Shadow Nexus",
+  "theme": "DARK",
+  "archetype": "Archetype 7 (Electric & Neon)",
+  "emotional_tone": "Immersive, high-stakes, elite, mysterious, tactical.",
+  "global_rules": [
+    "Follow mobile-first layout rules rigorously. Constrain max-width on desktop to simulate app experience if needed, or scale UI appropriately.",
+    "No generic flat colors. Use noise/grain overlays and intense lighting contrasts.",
+    "Avoid Bootstrap/Vercel standard looks. Use heavy stylization on inputs and buttons.",
+    "Use deep 'Void Black' base, do not use flat #000000 without texture.",
+    "Apply optical clarity glassmorphism for overlays."
+  ],
+  "color_palette": {
+    "background": {
+      "base": "#030305",
+      "surface": "#0A0A0F",
+      "surface_elevated": "#12121A"
+    },
+    "text": {
+      "primary": "#E2E8F0",
+      "secondary": "#94A3B8",
+      "muted": "#475569"
+    },
+    "brand": {
+      "primary": "#00F0FF",
+      "primary_glow": "rgba(0, 240, 255, 0.5)",
+      "success_green": "#00FF41",
+      "accent_purple": "#9D00FF",
+      "warning_amber": "#FFB000",
+      "danger_red": "#FF003C"
+    },
+    "borders": {
+      "default": "rgba(0, 240, 255, 0.15)",
+      "active": "rgba(0, 240, 255, 0.5)",
+      "purple_accent": "rgba(157, 0, 255, 0.3)"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "'Unbounded', sans-serif",
+      "body": "'JetBrains Mono', monospace",
+      "labels": "'JetBrains Mono', monospace"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl tracking-tighter font-black",
+      "h2": "text-2xl sm:text-3xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-semibold",
+      "body": "text-base leading-relaxed font-light",
+      "small_caps": "text-xs tracking-[0.2em] uppercase font-bold text-brand-primary"
+    }
+  },
+  "surface_strategies": {
+    "glassmorphism": {
+      "usage": "Overlays, sticky headers, NPC dialogue boxes",
+      "classes": "bg-black/60 backdrop-blur-xl border border-brand-primary/20 shadow-[0_8px_32px_rgba(0,240,255,0.1)]"
+    },
+    "retro_terminal": {
+      "usage": "Combat screens, hacking interfaces, skill trees",
+      "classes": "bg-[#030305] border border-success_green/40 shadow-[0_0_8px_rgba(0,255,65,0.2)]"
+    },
+    "grid_borders": {
+      "usage": "Dashboards, Inventory grids",
+      "classes": "border-collapse border border-brand-primary/20"
+    }
+  },
+  "layout_and_spacing": {
+    "base_grid": "grid-cols-1 md:grid-cols-4 lg:grid-cols-8",
+    "bento_grid": "grid gap-4 md:gap-6",
+    "padding": "p-4 md:p-6 lg:p-8",
+    "container": "w-full max-w-7xl mx-auto px-4 md:px-6"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-transparent border border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-[#030305] transition-all duration-300 uppercase tracking-widest text-sm shadow-[0_0_10px_rgba(0,240,255,0.3)] hover:shadow-[0_0_20px_rgba(0,240,255,0.6)]",
+      "secondary": "bg-transparent border border-accent_purple text-accent_purple hover:bg-accent_purple hover:text-white transition-all duration-300 uppercase tracking-widest text-sm",
+      "terminal_action": "bg-success_green text-black uppercase tracking-widest text-sm hover:brightness-110"
+    },
+    "inputs": {
+      "default": "bg-[#0A0A0F] border-b-2 border-brand-primary/30 focus:border-brand-primary text-brand-primary outline-none transition-colors rounded-none placeholder-brand-primary/30"
+    },
+    "cards": {
+      "dashboard": "bg-[#0A0A0F] border border-white/5 hover:border-brand-primary/30 transition-all p-4 md:p-6 relative overflow-hidden"
+    },
+    "npc_dialogue": {
+      "container": "fixed bottom-4 left-4 right-4 md:left-1/4 md:right-1/4 bg-black/80 backdrop-blur-xl border border-accent_purple/50 p-6 shadow-[0_0_30px_rgba(157,0,255,0.15)] z-50",
+      "speaker_name": "text-accent_purple font-bold tracking-widest uppercase mb-2",
+      "text": "text-white font-body text-lg leading-relaxed"
+    }
+  },
+  "motion_and_interactions": {
+    "hover": "All interactive elements must shift visually. Borders glow, backgrounds fill, text colors invert.",
+    "page_transition": "Fast fade-in with a subtle glitch effect.",
+    "list_stagger": "Fade and slide up 10px, staggered by 50ms.",
+    "combat_hit": "Screen shake / subtle red flash border."
+  },
+  "media": {
+    "image_urls": [
+      {
+        "id": "nexus-city",
+        "url": "https://static.prod-images.emergentagent.com/jobs/7499d0b0-0ff4-4057-9ab7-0aae648122c0/images/d1972f474c5c0df584ef8e78d53aee13c9478013e75e7989b8dbb840f6bea3cb.png",
+        "category": "background",
+        "description": "Nexus City map background or Login screen background."
+      },
+      {
+        "id": "cyber-academy",
+        "url": "https://static.prod-images.emergentagent.com/jobs/7499d0b0-0ff4-4057-9ab7-0aae648122c0/images/cc17a5aaaa0d445a9da216aaa998f4e4c78f02d4a43a69aab9324c4f8e4fd389.png",
+        "category": "background",
+        "description": "Academy location / Training mission background."
+      },
+      {
+        "id": "dark-web-market",
+        "url": "https://static.prod-images.emergentagent.com/jobs/7499d0b0-0ff4-4057-9ab7-0aae648122c0/images/b1101281f720665e86fdf36b80cf24df3302856e728a30abb92fb21dab613849.png",
+        "category": "background",
+        "description": "Marketplace / Inventory shop background."
+      },
+      {
+        "id": "character-avatar-1",
+        "url": "https://static.prod-images.emergentagent.com/jobs/7499d0b0-0ff4-4057-9ab7-0aae648122c0/images/d66a8b83050c46d864d34d1f77452e8abf88b15479d3b86358e6ad2af9b04d1f.png",
+        "category": "avatar",
+        "description": "Male elite hacker avatar, green visor."
+      },
+      {
+        "id": "character-avatar-2",
+        "url": "https://static.prod-images.emergentagent.com/jobs/7499d0b0-0ff4-4057-9ab7-0aae648122c0/images/d52620e162a51c527b8c9a355048ab0809532c05651aae528d58f4bf0fa8d677.png",
+        "category": "avatar",
+        "description": "Female cyberpunk operative avatar, purple lighting."
+      }
+    ],
+    "icons_library": "lucide-react",
+    "icons_style": "Sharp, 1.5px stroke, neon colored."
+  },
+  "screens_and_features": {
+    "login_register": {
+      "layout": "Centered form over 'nexus-city' background with heavy black/50 and backdrop-blur. Terminal-style text typing effect for welcome message.",
+      "elements": "Glitchy logo, inputs with only bottom borders, intense glowing primary button."
+    },
+    "character_creation": {
+      "layout": "Carousel of avatars. Class selection uses the 'Bento Grid' strategy. Each class card glows with a specific neon color upon selection.",
+      "elements": "Radar chart for stats (Offense, Defense, Stealth). CRT scanline overlay on avatars."
+    },
+    "dashboard_hud": {
+      "layout": "'Control Room' grid. Tight spacing (gap-4). Modular panels.",
+      "elements": "Top bar: Level, XP Progress (neon green bar), Coins. Main area: Current active mission card (large). Right/Bottom: Inventory summary, daily challenges list. No rounded corners, sharp technical UI."
+    },
+    "story_mode_map": {
+      "layout": "Nodes connected by glowing paths (SVG lines). Unlocked nodes glow blue, locked nodes are dim grey, current node pulses purple.",
+      "elements": "Background map graphics. 'Start Mission' modal slides in from right."
+    },
+    "npc_dialogue": {
+      "layout": "Visual novel style. Character portrait on the left/right. Bottom heavy glassmorphic text box. Dialogue text types out.",
+      "elements": "Branching choice buttons stacked vertically above the dialogue box. Hovering a choice turns it solid neon."
+    },
+    "cyber_combat": {
+      "layout": "Split screen or top-bottom turn-based RPG style. Enemy (AI/Server) at top, Player HUD at bottom.",
+      "elements": "Action menu: [Exploits, Firewalls, Malware, Run]. Health bars are styled as 'System Integrity' percentages. Attack animations use CSS glitches and flash effects."
+    },
+    "inventory": {
+      "layout": "Dense grid of items. Dark grey backgrounds with rarity-colored borders (Common: Gray, Rare: Blue, Epic: Purple, Legendary: Orange).",
+      "elements": "Hovering an item shows a tooltip with item lore and stats."
+    },
+    "skill_tree": {
+      "layout": "Pan and zoom canvas (or a large scrollable area). Hexagonal or diamond-shaped nodes.",
+      "elements": "Lines connecting nodes light up when the prerequisite is met. Active nodes have an inner glow."
+    }
+  },
+  "testing_attributes": "All actionable and data-displaying elements must include `data-testid` in kebab-case (e.g., `data-testid=\"login-submit-button\"`, `data-testid=\"xp-bar\"`).",
+  "instructions_to_main_agent": [
+    "Build the application using React Native and Expo, as this is the actual environment running.",
+    "Use NativeWind for Tailwind CSS styling if available, otherwise translate the provided Tailwind classes into React Native StyleSheet objects.",
+    "Do not use Shadcn UI directly as it is web-only; instead, build custom React Native components (Views, Text, TouchableOpacity) that mimic the specified 'retro_terminal' and 'glassmorphism' styles.",
+    "Implement navigation using Expo Router or React Navigation (Bottom Tabs for main navigation, Stack for combat/story screens).",
+    "Do not use generic border-radius. Use square edges or extremely subtle 2px radii to maintain the aggressive cyberpunk aesthetic.",
+    "Integrate the provided image URLs perfectly using the React Native <Image /> component.",
+    "Load 'Unbounded' and 'JetBrains Mono' fonts using expo-font and ensure they are applied globally via custom Text wrappers."
+  ]
+}

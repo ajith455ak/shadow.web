@@ -1,0 +1,41 @@
+{
+  "summary": "Full backend regression + new hacking + NPC persuasion + messenger features tested. 21/21 pytest cases pass after fixing one route-ordering bug in server.py (/api/npcs/trust was being shadowed by /api/npcs/{npc_id}). End-to-end hack chain (recon→exploit→privesc→exfil→complete) verified against helix_corp_perimeter with correct Helix faction trust deltas (aria -25, jin +15) and BYTE+ARIA inbox messages auto-pushed. Claude Sonnet 4.5 LLM responses confirmed non-fallback for persuade and npc/chat. All 8 NPCs (incl. ARIA, Jin, Vector) have dicebear portrait URLs, faction, hostile, tag.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/npcs/trust",
+        "issue": "FIXED — was shadowed by /api/npcs/{npc_id} catch-all route declared earlier (returned 404 with detail 'NPC not found'). Moved /npcs/trust handler ABOVE /npcs/{npc_id} in server.py."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_hack_and_npcs.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "(Info only — already fixed by tester) Be mindful of FastAPI route declaration order; static paths must come before parameterized siblings. Confirm no other shadowed routes (currently none observed)."
+  ],
+  "critical_code_review_comments": [
+    "hack/complete uses HackStartIn with field 'target' to carry session_id — semantically confusing; consider a dedicated HackCompleteIn{session_id} model.",
+    "server.py is 1086 lines — consider splitting routers (auth, character, hack, npcs, messenger) into separate modules for maintainability (file >700 lines guideline).",
+    "Persuade endpoint always recomputes a fresh session_id (uuid suffix), so Claude has no memory across attempts — intentional but worth documenting.",
+    "crack-progress GET exposes pw_hash but never the plaintext; pw_plain is stripped via _strip() — good."
+  ],
+  "updated_files": [
+    "/app/backend/server.py (reordered /npcs/trust before /npcs/{npc_id})",
+    "/app/backend/tests/test_hack_and_npcs.py (new pytest suite, replaces old native script)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "not_tested"},
+  "seed_data_creation": "Each test run registers a fresh user (test_<uuid>@nexus.io / password123) and creates a penetration_tester character; no manual seed data required.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend public URL via EXPO_PUBLIC_BACKEND_URL. Use /app/backend/tests/test_hack_and_npcs.py — covers all hack/*, npcs/*, messenger/* plus full regression of prior endpoints. Hack full-chain test brute-forces password against the dictionary (password is guaranteed in crack-progress lines). LLM calls add ~6s latency per persuade/chat test.",
+  "rca_of_issue": "RCA: FastAPI matches routes in declaration order. /api/npcs/{npc_id} was defined at line 547 while /api/npcs/trust was defined at line 1054. Requests to /api/npcs/trust matched the parameterized route first with npc_id='trust', and since no NPC has id 'trust', it returned 404. Mitigation: moved /npcs/trust handler above /npcs/{npc_id}. Verified by re-running test suite → all 21 tests pass."
+}

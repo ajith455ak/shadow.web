@@ -1,0 +1,8 @@
+[build]
+  publish = "dist"
+  command = "yarn install && npx expo export"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
