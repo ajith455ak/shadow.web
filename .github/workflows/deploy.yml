@@ -35,7 +35,7 @@ jobs:
           
           # Query deploy status until live or failed
           python -c "
-          import urllib.request, json, ssl, time, sys
+          import urllib.request, json, ssl, time, sys, os
           api_key = 'rnd_oChEZnH4KJPJk6sILMVt4HfvnENq'
           service_id = 'srv-d8mecb67r5hc739mkn10'
           deploy_id = '$DEPLOY_ID'
@@ -45,6 +45,27 @@ jobs:
           ctx = ssl.create_default_context()
           ctx.check_hostname = False
           ctx.verify_mode = ssl.CERT_NONE
+          
+          def write_summary(status, is_success):
+              summary_path = os.getenv('GITHUB_STEP_SUMMARY')
+              if summary_path:
+                  status_icon = '🟢 LIVE' if is_success else f'🔴 {status.upper()}'
+                  title = '🚀 Render Deployment Succeeded' if is_success else '❌ Render Deployment Failed'
+                  commit_sha = os.getenv('GITHUB_SHA', 'N/A')
+                  md = [
+                      f'# {title}\n',
+                      'The automated deployment to Render has completed.\n',
+                      '| Parameter | Value |',
+                      '| --- | --- |',
+                      f'| **Service ID** | `{service_id}` |',
+                      f'| **Deploy ID** | `{deploy_id}` |',
+                      f'| **Commit SHA** | `{commit_sha}` |',
+                      f'| **Status** | {status_icon} |',
+                      '| **Deployment URL** | [shadow-4cve.onrender.com](https://shadow-4cve.onrender.com) |'
+                  ]
+                  with open(summary_path, 'w', encoding='utf-8') as f:
+                      f.write('\n'.join(md))
+                      
           print(f'Waiting for deploy {deploy_id} to complete...')
           while True:
               try:
@@ -54,9 +75,11 @@ jobs:
                       print(f'Current deploy status: {status}')
                       if status == 'live':
                           print('Deploy succeeded!')
+                          write_summary(status, True)
                           sys.exit(0)
                       elif status in ('build_failed', 'update_failed', 'canceled'):
                           print(f'Deploy failed with status: {status}')
+                          write_summary(status, False)
                           sys.exit(1)
               except Exception as e:
                   print(f'Error checking deploy status: {e}')
