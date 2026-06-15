@@ -41,7 +41,21 @@ ctx.verify_mode = ssl.CERT_NONE
 
 try:
     with urllib.request.urlopen(req, context=ctx) as response:
-        data = json.loads(response.read().decode())
+        raw_body = response.read().decode().strip()
+        try:
+            data = json.loads(raw_body) if raw_body else {}
+        except json.JSONDecodeError:
+            data = {}
+            
+        if not data or "id" not in data:
+            deploy_id = get_latest_deploy_id()
+            if deploy_id:
+                print(json.dumps({"id": deploy_id, "status": "no_content_fallback"}, indent=2))
+                sys.exit(0)
+            else:
+                print(f"Error: Invalid response body '{raw_body}' and failed to fetch latest deploy ID", file=sys.stderr)
+                sys.exit(1)
+                
         print(json.dumps(data, indent=2))
 except Exception as e:
     # 400/409 represents conflict when deploy is already in progress
